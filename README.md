@@ -25,12 +25,13 @@ struct MyRights: RightsManifest {
     let author = Read(\.author)
 }
 
-let book = Protected(Book(), by: PrePublishRights())
-book.title // works
-book.title = "Don Quixote" // works
-book.author // works
-book.author = "" // will not compile
-book.isbn // will not compile
+func work(book: Protected<Book, MyRights>) {
+    book.title // works
+    book.title = "Don Quixote" // works
+    book.author // works
+    book.author = "" // will not compile
+    book.isbn // will not compile
+}
 ```
 
 This project is heavily inspired by [@sellmair](https://github.com/sellmair)'s [post on Phantom Read Rights](https://medium.com/@sellmair/phantom-read-rights-in-kotlin-modelling-a-pipeline-eef3523db857).
