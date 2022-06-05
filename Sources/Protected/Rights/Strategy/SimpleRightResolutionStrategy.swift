@@ -1,10 +1,16 @@
 
 import Foundation
 
-public struct SimpleRightResolutionStrategy<Value>: RightResolutionStrategy {
+struct SimpleRightResolutionStrategy<Value>: RightResolutionStrategy {
     init() { }
 
-    public func resolve(value: Value) -> Value {
+    func resolve(value: Value) -> Value {
         return value
+    }
+}
+
+extension AnyRightResolutionStrategy where Value == Resolved {
+    static func simple() -> AnyRightResolutionStrategy<Value, Resolved> {
+        return AnyRightResolutionStrategy(SimpleRightResolutionStrategy())
     }
 }

@@ -1,9 +1,9 @@
 
 import Foundation
 
-public struct ProtectedRightResolutionStrategy<Rights: RightsManifest>: RightResolutionStrategy {
-    public typealias Value = Rights.ProtectedType
-    public typealias Resolved = Protected<Value, Rights>
+struct ProtectedRightResolutionStrategy<Rights: RightsManifest>: RightResolutionStrategy {
+    typealias Value = Rights.ProtectedType
+    typealias Resolved = Protected<Value, Rights>
 
     private let rights: Rights
 
@@ -11,7 +11,15 @@ public struct ProtectedRightResolutionStrategy<Rights: RightsManifest>: RightRes
         self.rights = rights
     }
 
-    public func resolve(value: Rights.ProtectedType) -> Protected<Value, Rights> {
+    func resolve(value: Rights.ProtectedType) -> Protected<Value, Rights> {
         return Protected(value, by: rights)
     }
+}
+
+extension AnyRightResolutionStrategy {
+
+    static func protected<Rights: RightsManifest>(_ rights: Rights) -> AnyRightResolutionStrategy<Value, Resolved> where Rights.ProtectedType == Value, Resolved == Rights.Resolved {
+        return AnyRightResolutionStrategy(ProtectedRightResolutionStrategy(rights: rights))
+    }
+
 }

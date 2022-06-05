@@ -11,7 +11,7 @@ public class Protected<Value, Rights : RightsManifest> where Rights.ProtectedTyp
         self.rights = rights
     }
 
-    public subscript<T, Strategy : RightResolutionStrategy>(dynamicMember keyPath: KeyPath<Rights, ReadPropertyRight<Value, T, Strategy>>) -> Strategy.Resolved {
+    public subscript<T, Resolved>(dynamicMember keyPath: KeyPath<Rights, ReadPropertyRight<Value, T, Resolved>>) -> Resolved {
         let right = rights[keyPath: keyPath]
         return right.strategy.resolve(value: value[keyPath: right.keyPath])
     }

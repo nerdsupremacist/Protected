@@ -1,54 +1,63 @@
 
 import Foundation
 
-public struct ReadPropertyRight<ProtectedType, Value, Strategy: RightResolutionStrategy> where Strategy.Value == Value {
+public struct ReadPropertyRight<ProtectedType, Value, Resolved> {
     let keyPath: KeyPath<ProtectedType, Value>
-    let strategy: Strategy
+    let strategy: AnyRightResolutionStrategy<Value, Resolved>
 
-    init(_ keyPath: KeyPath<ProtectedType, Value>, strategy: Strategy) {
+    init(_ keyPath: KeyPath<ProtectedType, Value>, strategy: AnyRightResolutionStrategy<Value, Resolved>) {
         self.keyPath = keyPath
-        self.strategy = strategy
-    }
-
-    public init<Rights : RightsManifest>(_ keyPath: KeyPath<ProtectedType, Value>,
-                                         protectedBy rights: Rights) where Rights.ProtectedType == Value, Strategy == ProtectedRightResolutionStrategy<Rights> {
-
-        self.init(keyPath, strategy: ProtectedRightResolutionStrategy(rights: rights))
-    }
-
-    public init<Rights : RightsManifest>(_ keyPath: KeyPath<ProtectedType, Value>,
-                                         protectedBy rights: Rights) where Optional<Rights.ProtectedType> == Value, Strategy == OptionalRightResolutionStrategy<ProtectedRightResolutionStrategy<Rights>> {
-
-        self.init(keyPath, strategy: OptionalRightResolutionStrategy(strategy: ProtectedRightResolutionStrategy(rights: rights)))
-    }
-
-    public init<Rights : RightsManifest>(_ keyPath: KeyPath<ProtectedType, Value>,
-                                         protectedBy rights: Rights) where Array<Rights.ProtectedType> == Value, Strategy == ArrayRightResolutionStrategy<ProtectedRightResolutionStrategy<Rights>> {
-
-        self.init(keyPath, strategy: ArrayRightResolutionStrategy(strategy: ProtectedRightResolutionStrategy(rights: rights)))
-    }
-
-    public init<Rights : RightsManifest>(_ keyPath: KeyPath<ProtectedType, Value>,
-                                         protectedBy rights: Rights) where Optional<Array<Rights.ProtectedType>> == Value, Strategy == OptionalRightResolutionStrategy<ArrayRightResolutionStrategy<ProtectedRightResolutionStrategy<Rights>>> {
-
-        self.init(keyPath, strategy: OptionalRightResolutionStrategy(strategy: ArrayRightResolutionStrategy(strategy: ProtectedRightResolutionStrategy(rights: rights))))
-    }
-
-    public init<Rights : RightsManifest>(_ keyPath: KeyPath<ProtectedType, Value>,
-                                         protectedBy rights: Rights) where Array<Optional<Rights.ProtectedType>> == Value, Strategy == ArrayRightResolutionStrategy<OptionalRightResolutionStrategy<ProtectedRightResolutionStrategy<Rights>>> {
-
-        self.init(keyPath, strategy: ArrayRightResolutionStrategy(strategy: OptionalRightResolutionStrategy(strategy: ProtectedRightResolutionStrategy(rights: rights))))
-    }
-
-    public init<Rights : RightsManifest>(_ keyPath: KeyPath<ProtectedType, Value>,
-                                         protectedBy rights: Rights) where Optional<Array<Optional<Rights.ProtectedType>>> == Value, Strategy == OptionalRightResolutionStrategy<ArrayRightResolutionStrategy<OptionalRightResolutionStrategy<ProtectedRightResolutionStrategy<Rights>>>> {
-
-        self.init(keyPath, strategy: OptionalRightResolutionStrategy(strategy: ArrayRightResolutionStrategy(strategy: OptionalRightResolutionStrategy(strategy: ProtectedRightResolutionStrategy(rights: rights)))))
+        self.strategy = AnyRightResolutionStrategy(strategy)
     }
 }
 
-extension ReadPropertyRight where Strategy == SimpleRightResolutionStrategy<Value> {
+extension ReadPropertyRight where Resolved == Value {
     public init(_ keyPath: KeyPath<ProtectedType, Value>) {
-        self.init(keyPath, strategy: SimpleRightResolutionStrategy())
+        self.init(keyPath, strategy: .simple())
+    }
+
+    public func protected<Rights : RightsManifest>(by rights: Rights) -> ReadPropertyRight<ProtectedType, Value, Rights.Resolved> where Value == Rights.ProtectedType {
+        return .init(keyPath, strategy: .protected(rights))
+    }
+
+    public func protected<Rights : RightsManifest>(by rights: Rights) -> ReadPropertyRight<ProtectedType, Value, Rights.Resolved?> where Value == Rights.ProtectedType? {
+        return .init(keyPath, strategy: .optional(.protected(rights)))
+    }
+
+    public func protected<Rights : RightsManifest>(by rights: Rights) -> ReadPropertyRight<ProtectedType, Value, [Rights.Resolved]> where Value == [Rights.ProtectedType] {
+        return .init(keyPath, strategy: .array(.protected(rights)))
+    }
+
+    public func protected<Rights : RightsManifest>(by rights: Rights) -> ReadPropertyRight<ProtectedType, Value, [Rights.Resolved]?> where Value == [Rights.ProtectedType]? {
+        return .init(keyPath, strategy: .optional(.array(.protected(rights))))
+    }
+
+    public func protected<Rights : RightsManifest>(by rights: Rights) -> ReadPropertyRight<ProtectedType, Value, [Rights.Resolved?]> where Value == [Rights.ProtectedType?] {
+        return .init(keyPath, strategy: .array(.optional(.protected(rights))))
+    }
+
+    public func protected<Rights : RightsManifest>(by rights: Rights) -> ReadPropertyRight<ProtectedType, Value, [Rights.Resolved?]?> where Value == [Rights.ProtectedType?]? {
+        return .init(keyPath, strategy: .optional(.array(.optional(.protected(rights)))))
+    }
+
+}
+
+extension ReadPropertyRight {
+    public init<Rights : RightsManifest>(_ keyPath: KeyPath<ProtectedType, Value>,
+                                         protectedBy rights: Rights) where Resolved == [Rights.Resolved]?, Value == [Rights.ProtectedType]? {
+
+        self.init(keyPath, strategy: .optional(.array(.protected(rights))))
+    }
+
+    public init<Rights : RightsManifest>(_ keyPath: KeyPath<ProtectedType, Value>,
+                                         protectedBy rights: Rights) where Resolved == [Rights.Resolved?], Value == [Rights.ProtectedType?] {
+
+        self.init(keyPath, strategy: .array(.optional(.protected(rights))))
+    }
+
+    public init<Rights : RightsManifest>(_ keyPath: KeyPath<ProtectedType, Value>,
+                                         protectedBy rights: Rights) where Resolved == [Rights.Resolved?]?, Value == [Rights.ProtectedType?]? {
+
+        self.init(keyPath, strategy: .optional(.array(.optional(.protected(rights)))))
     }
 }

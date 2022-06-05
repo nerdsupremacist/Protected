@@ -38,7 +38,7 @@ struct PrePublishRights: RightsManifest {
 
     let title = Write(\.title)
     let author = Read(\.author)
-    let isbn = Read(\.isbn, protectedBy: FirstCharacterOnly())
+    let isbn = Read(\.isbn).protected(by: FirstCharacterOnly())
 }
 
 struct FirstCharacterOnly: RightsManifest {

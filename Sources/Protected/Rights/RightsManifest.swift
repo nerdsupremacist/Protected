@@ -6,6 +6,7 @@ public protocol RightsManifest {
 }
 
 extension RightsManifest {
-    public typealias Read<T, Strategy : RightResolutionStrategy> = ReadPropertyRight<ProtectedType, T, Strategy> where Strategy.Value == T
+    public typealias Resolved = Protected<ProtectedType, Self>
+    public typealias Read<T, Resolved> = ReadPropertyRight<ProtectedType, T, Resolved>
     public typealias Write<T> = WritePropertyRight<ProtectedType, T>
 }

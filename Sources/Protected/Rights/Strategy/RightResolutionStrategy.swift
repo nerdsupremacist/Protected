@@ -1,7 +1,7 @@
 
 import Foundation
 
-public protocol RightResolutionStrategy {
+protocol RightResolutionStrategy {
     associatedtype Value
     associatedtype Resolved
 
