@@ -218,6 +218,15 @@ struct AuthorBasicRights: RightsManifest {
 }
 ```
 
+### Caveats
+
+This is not a perfect protection for no one to be able to access things they shouldn't. 
+Protected is not a security framework, it will not prevent people from accessing or mutating anything. 
+It is intended as an easy way to make safe usage clear and simple depending on context.
+
+1. A code can always access everything using the `unsafeX` methods provided.
+2. You can (but really shouldn't) include more rights whithin the extension of a manifest. This allows you to include more rights than intended while still appearing to be safe. Do not do this! Protected cannot protect you from doing this. 
+
 ## Contributions
 Contributions are welcome and encouraged!
 
