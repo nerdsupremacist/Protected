@@ -1,25 +1,27 @@
 
 import Foundation
 
-struct ProtectedRightResolutionStrategy<Rights: RightsManifest>: RightResolutionStrategy {
-    typealias Value = Rights.ProtectedType
-    typealias Resolved = Protected<Value, Rights>
+struct ProtectedRightResolutionStrategy<Strategy: RightResolutionStrategy, Rights: RightsManifest>: RightResolutionStrategy where Rights.ProtectedType == Strategy.Resolved {
+    typealias Value = Strategy.Value
+    typealias Resolved = Protected<Strategy.Resolved, Rights>
 
+    private let strategy: Strategy
     private let rights: Rights
 
-    init(rights: Rights) {
+    init(strategy: Strategy, rights: Rights) {
+        self.strategy = strategy
         self.rights = rights
     }
 
-    func resolve(value: Rights.ProtectedType) -> Protected<Value, Rights> {
-        return Protected(value, by: rights)
+    func resolve(value: Value) -> Protected<Strategy.Resolved, Rights> {
+        return Protected(strategy.resolve(value: value), by: rights)
     }
 }
 
-extension AnyRightResolutionStrategy {
+extension RightResolutionStrategy {
 
-    static func protected<Rights: RightsManifest>(_ rights: Rights) -> AnyRightResolutionStrategy<Value, Resolved> where Rights.ProtectedType == Value, Resolved == Rights.Resolved {
-        return AnyRightResolutionStrategy(ProtectedRightResolutionStrategy(rights: rights))
+    func protected<Rights: RightsManifest>(by rights: Rights) -> ProtectedRightResolutionStrategy<Self, Rights> where Rights.ProtectedType == Resolved {
+        return ProtectedRightResolutionStrategy(strategy: self, rights: rights)
     }
 
 }

@@ -16,10 +16,10 @@ struct ArrayRightResolutionStrategy<Strategy : RightResolutionStrategy>: RightRe
     }
 }
 
-extension AnyRightResolutionStrategy {
+extension RightResolutionStrategy {
 
-    static func array<V, R>(_ strategy: AnyRightResolutionStrategy<V, R>) -> AnyRightResolutionStrategy<Value, Resolved> where Value == [V], Resolved == [R] {
-        return AnyRightResolutionStrategy(ArrayRightResolutionStrategy(strategy: strategy))
+    func array() -> ArrayRightResolutionStrategy<Self> {
+        return ArrayRightResolutionStrategy(strategy: self)
     }
 
 }

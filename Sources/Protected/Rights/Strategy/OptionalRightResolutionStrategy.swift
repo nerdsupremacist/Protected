@@ -16,10 +16,10 @@ struct OptionalRightResolutionStrategy<Strategy : RightResolutionStrategy>: Righ
     }
 }
 
-extension AnyRightResolutionStrategy {
+extension RightResolutionStrategy {
 
-    static func optional<V, R>(_ strategy: AnyRightResolutionStrategy<V, R>) -> AnyRightResolutionStrategy<Value, Resolved> where Value == V?, Resolved == R? {
-        return AnyRightResolutionStrategy(OptionalRightResolutionStrategy(strategy: strategy))
+    func optional() -> OptionalRightResolutionStrategy<Self> {
+        return OptionalRightResolutionStrategy(strategy: self)
     }
 
 }
