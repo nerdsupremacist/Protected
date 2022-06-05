@@ -34,27 +34,27 @@ extension ReadPropertyRight {
     }
     
     public func protected<Rights : RightsManifest>(by rights: Rights) -> ReadPropertyRight<ProtectedType, Rights.Resolved?> where Value == Rights.ProtectedType? {
-        return wrapAsSimple { $0.protected(by: rights).optional() }
+        return wrapResult { $0.protected(by: rights).optional() }
     }
 
     public func protected<Rights : RightsManifest>(by rights: Rights) -> ReadPropertyRight<ProtectedType, [Rights.Resolved]> where Value == [Rights.ProtectedType] {
-        return wrapAsSimple { $0.protected(by: rights).array() }
+        return wrapResult { $0.protected(by: rights).array() }
     }
 
     public func protected<Rights : RightsManifest>(by rights: Rights) -> ReadPropertyRight<ProtectedType, [Rights.Resolved]?> where Value == [Rights.ProtectedType]? {
-        return wrapAsSimple { $0.protected(by: rights).array().optional() }
+        return wrapResult { $0.protected(by: rights).array().optional() }
     }
 
     public func protected<Rights : RightsManifest>(by rights: Rights) -> ReadPropertyRight<ProtectedType, [Rights.Resolved?]> where Value == [Rights.ProtectedType?] {
-        return wrapAsSimple { $0.protected(by: rights).optional().array() }
+        return wrapResult { $0.protected(by: rights).optional().array() }
     }
 
     public func protected<Rights : RightsManifest>(by rights: Rights) -> ReadPropertyRight<ProtectedType, [Rights.Resolved?]?> where Value == [Rights.ProtectedType?]? {
-        return wrapAsSimple { $0.protected(by: rights).optional().array().optional() }
+        return wrapResult { $0.protected(by: rights).optional().array().optional() }
     }
 
-    private func wrapAsSimple<T, S: RightResolutionStrategy>(_ create: (SimpleRightResolutionStrategy<T>) -> S) -> ReadPropertyRight<ProtectedType, S.Resolved> where Value == S.Value {
-        return .init(strategy: strategy.wrapAsSimple(create))
+    private func wrapResult<T, S: RightResolutionStrategy>(_ create: (SimpleRightResolutionStrategy<T>) -> S) -> ReadPropertyRight<ProtectedType, S.Resolved> where Value == S.Value {
+        return .init(strategy: strategy.wrapResult(create))
     }
 }
 

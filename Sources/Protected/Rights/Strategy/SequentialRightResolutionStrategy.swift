@@ -12,7 +12,7 @@ struct SequentialRightResolutionStrategy<Previous: RightResolutionStrategy, Next
 
 extension RightResolutionStrategy {
 
-    func wrapAsSimple<T, S>(_ create: (SimpleRightResolutionStrategy<T>) -> S) -> SequentialRightResolutionStrategy<Self, S> where S.Value == Resolved {
+    func wrapResult<T, S>(_ create: (SimpleRightResolutionStrategy<T>) -> S) -> SequentialRightResolutionStrategy<Self, S> where S.Value == Resolved {
         let simple = SimpleRightResolutionStrategy<T>()
         return SequentialRightResolutionStrategy(previous: self, next: create(simple))
     }
