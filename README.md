@@ -1,4 +1,8 @@
 <p align="center">
+    <img src="logo.png" width="600" max-width="90%" alt="Proteted" />
+</p>
+
+<p align="center">
     <img src="https://img.shields.io/badge/Swift-5.5-orange.svg" />
     <a href="https://swift.org/package-manager">
         <img src="https://img.shields.io/badge/swiftpm-compatible-brightgreen.svg?style=flat" alt="Swift Package Manager" />
