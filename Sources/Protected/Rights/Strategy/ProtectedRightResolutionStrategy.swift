@@ -12,6 +12,6 @@ public struct ProtectedRightResolutionStrategy<Rights: RightsManifest>: RightRes
     }
 
     public func resolve(value: Rights.ProtectedType) -> Protected<Value, Rights> {
-        return Protected(value: value, by: rights)
+        return Protected(value, by: rights)
     }
 }

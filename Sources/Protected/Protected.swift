@@ -6,7 +6,7 @@ public class Protected<Value, Rights : RightsManifest> where Rights.ProtectedTyp
     private var value: Value
     private let rights: Rights
 
-    public init(value: Value, by rights: Rights) {
+    public init(_ value: Value, by rights: Rights) {
         self.value = value
         self.rights = rights
     }
@@ -26,7 +26,7 @@ public class Protected<Value, Rights : RightsManifest> where Rights.ProtectedTyp
     }
 
     public func unsafeChangeRights<TransformedRights : RightsManifest>(to rights: TransformedRights) -> Protected<Value, TransformedRights> {
-        return Protected<Value, TransformedRights>(value: value, by: rights)
+        return Protected<Value, TransformedRights>(value, by: rights)
     }
 
     public func unsafeBypassRights() -> Value {

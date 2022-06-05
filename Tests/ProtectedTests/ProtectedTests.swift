@@ -18,7 +18,7 @@ func createBook() -> Protected<Book, PrePublishRights> {
     book.title = "Don Quixote"
     book.author = "Miguel de Cervantes"
     book.isbn = "0060188707"
-    return Protected(value: book, by: .prePublish)
+    return Protected(book, by: .prePublish)
 }
 
 class Book {
