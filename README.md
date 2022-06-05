@@ -26,11 +26,11 @@ struct MyRights: RightsManifest {
 }
 
 func work(book: Protected<Book, MyRights>) {
-    book.title // works
-    book.title = "Don Quixote" // works
-    book.author // works
-    book.author = "" // will not compile
-    book.isbn // will not compile
+    book.title // ✅ works
+    book.title = "Don Quixote" // ✅ works
+    book.author // ✅ works
+    book.author = "" // ❌ will not compile
+    book.isbn // ❌ will not compile
 }
 ```
 
@@ -101,11 +101,11 @@ Each attribute you declare in the manifest can then be read in that context. So 
 
 ```swift
 let book = Protected(Book(), by: PrePublishRights())
-book.title // works
-book.title = "Don Quixote" // works
-book.author // works
-book.author = "" // will not compile
-book.isbn // will not compile
+book.title // ✅ works
+book.title = "Don Quixote" // ✅ works
+book.author // ✅ works
+book.author = "" // ❌ will not compile
+book.isbn // ❌ will not compile
 ```
 
 ### More Advanced Features
@@ -148,10 +148,10 @@ struct BookBasicRights: RightsManifest {
 With this when you try to use it, you won't be able to access the password:
 ```swift
 let book = Protected(Book(), by: BookBasicRights())
-book.title // works
+book.title // ✅ works
 let author = book.author // returns a Protected<Author, AuthorBasicRights>?
-author?.name // works
-author?.password // will not compile
+author?.name // ✅ works
+author?.password // ❌ will not compile
 ```
 
 #### Manipulating Values and Changing Rights
