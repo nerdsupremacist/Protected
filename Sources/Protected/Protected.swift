@@ -28,4 +28,8 @@ public class Protected<Value, Rights : RightsManifest> where Rights.ProtectedTyp
     public func unsafeChangeRights<TransformedRights : RightsManifest>(to rights: TransformedRights) -> Protected<Value, TransformedRights> {
         return Protected<Value, TransformedRights>(value: value, by: rights)
     }
+
+    public func unsafeBypassRights() -> Value {
+        return value
+    }
 }
