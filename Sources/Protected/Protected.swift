@@ -25,6 +25,10 @@ public final class Protected<Value, Rights : RightsManifest> where Rights.Protec
         }
     }
 
+    public func unsafeMutate(_ mutations: (inout Value) -> Void) {
+        mutations(&value)
+    }
+
     public func unsafeChangeRights<TransformedRights : RightsManifest>(to rights: TransformedRights) -> Protected<Value, TransformedRights> {
         return Protected<Value, TransformedRights>(value, by: rights)
     }

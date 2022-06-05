@@ -5,11 +5,14 @@ final class ProtectedTests: XCTestCase {
     func testSampleRights() throws {
         let book = createBook()
         XCTAssertEqual(book.title, "Don Quixote")
+        XCTAssertEqual(book.title.first, "D")
         XCTAssertEqual(book.author, "Miguel de Cervantes")
-        XCTAssertEqual(book.isbn.first, "0")
+        XCTAssertEqual(book.isbn, "0060188707")
 
         book.title = "La cueva de salamanca"
         XCTAssertEqual(book.title, "La cueva de salamanca")
+        book.unsafeMutate { $0.isbn = nil }
+        XCTAssertEqual(book.isbn.first, nil)
     }
 }
 
@@ -36,8 +39,8 @@ extension RightsManifest where Self == PrePublishRights {
 struct PrePublishRights: RightsManifest {
     typealias ProtectedType = Book
 
-    let title = Write(\.title)
-    let author = Read(\.author)
+    let title = Write(\.title!)
+    let author = Read(\.author!)
     let isbn = Read(\.isbn) ?? ""
 }
 
