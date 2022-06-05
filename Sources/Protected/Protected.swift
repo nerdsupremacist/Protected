@@ -2,7 +2,7 @@
 import Foundation
 
 @dynamicMemberLookup
-public class Protected<Value, Rights : RightsManifest> where Rights.ProtectedType == Value {
+public final class Protected<Value, Rights : RightsManifest> where Rights.ProtectedType == Value {
     private var value: Value
     private let rights: Rights
 
@@ -11,9 +11,9 @@ public class Protected<Value, Rights : RightsManifest> where Rights.ProtectedTyp
         self.rights = rights
     }
 
-    public subscript<T, Resolved>(dynamicMember keyPath: KeyPath<Rights, ReadPropertyRight<Value, T, Resolved>>) -> Resolved {
+    public subscript<T>(dynamicMember keyPath: KeyPath<Rights, ReadPropertyRight<Value, T>>) -> T {
         let right = rights[keyPath: keyPath]
-        return right.strategy.resolve(value: value[keyPath: right.keyPath])
+        return right.strategy.resolve(value: value)
     }
 
     public subscript<T>(dynamicMember keyPath: KeyPath<Rights, WritePropertyRight<Value, T>>) -> T {
@@ -31,5 +31,11 @@ public class Protected<Value, Rights : RightsManifest> where Rights.ProtectedTyp
 
     public func unsafeBypassRights() -> Value {
         return value
+    }
+}
+
+extension Protected where Rights == Omniscient<Value> {
+    public convenience init(_ value: Value) {
+        self.init(value, by: .omniscient())
     }
 }

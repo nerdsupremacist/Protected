@@ -1,7 +1,7 @@
 
 import Foundation
 
-class AnyRightResolutionStrategy<Value, Resolved>: RightResolutionStrategy {
+final class AnyRightResolutionStrategy<Value, Resolved>: RightResolutionStrategy {
     private class BaseStorage {
         func resolve(value: Value) -> Resolved {
             fatalError()

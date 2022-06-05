@@ -1,7 +1,7 @@
 
 import Foundation
 
-class MapRightResolutionResolutionStrategy<Value, Strategy: RightResolutionStrategy, Resolved>: RightResolutionStrategy where Strategy.Value == Value {
+final class MapRightResolutionResolutionStrategy<Value, Strategy: RightResolutionStrategy, Resolved>: RightResolutionStrategy where Strategy.Value == Value {
     private let strategy: Strategy
     private let transform: (Strategy.Resolved) -> Resolved
 

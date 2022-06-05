@@ -5,7 +5,7 @@ import Foundation
 public struct Omniscient<ProtectedType> : RightsManifest {
     public init() { }
 
-    public subscript<T>(dynamicMember keyPath: KeyPath<ProtectedType, T>) -> ReadPropertyRight<ProtectedType, T, T> {
+    public subscript<T>(dynamicMember keyPath: KeyPath<ProtectedType, T>) -> ReadPropertyRight<ProtectedType, T> {
         return ReadPropertyRight(keyPath)
     }
 
