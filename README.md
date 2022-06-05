@@ -74,9 +74,11 @@ So what's wrong with this code? Well plenty of things:
 1. Everyting can be read publicly.
 1. Everything is mutable, all of the time. And if anything is mutable, you can bet someone will mutate it, and probably in a part of code where you are not expecting it.
 
-These things might not look to bad when it comes to a simple class with three attributes, but as your classes get more complicated, keeping track of what can be read and mutated where becomes very difficult.
+One way to address this would be to create a different version of `Book` for every scenario: `PlannedBook`, `PrePublishingBook`, `PostPublishingBook`, `PublishedBook`, etc. But this leads to an unsustainable amount of code duplication and added complexity.
+These things might not look to bad when it comes to a simple class with three attributes, but as your classes get more complicated and we get more and more cases, keeping track of what can be read and mutated where becomes very difficult.
 
-Enter our package Protected. When working with Protected we are mainly working with two things:
+Enter our package Protected. When working with Protected, you write your model once, and we change how you access it. 
+We are mainly working with two things:
 1. `RightsManifest`s: basically a type that specifies to what you have access to and how much.
 2. `Protected`: a wrapper that will enforce at compile time that you only read and write what's allowed by the manifest.
 
