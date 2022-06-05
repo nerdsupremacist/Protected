@@ -25,12 +25,24 @@ public final class Protected<Value, Rights : RightsManifest> where Rights.Protec
         }
     }
 
-    public func unsafeMutate(_ mutations: (inout Value) -> Void) {
-        mutations(&value)
+    public func unsafeMutate(_ mutations: (inout Value) throws -> Void) rethrows {
+        try mutations(&value)
     }
 
     public func unsafeChangeRights<TransformedRights : RightsManifest>(to rights: TransformedRights) -> Protected<Value, TransformedRights> {
         return Protected<Value, TransformedRights>(value, by: rights)
+    }
+
+    public func unsafeMapAndChangeRights<TransformedRights : RightsManifest>(to rights: TransformedRights, _ transform: (Value) throws -> Value) rethrows -> Protected<Value, TransformedRights> {
+        let value = try transform(value)
+        return Protected<Value, TransformedRights>(value, by: rights)
+    }
+
+    public func unsafeMutateAndChangeRights<TransformedRights : RightsManifest>(to rights: TransformedRights,
+                                                                                _ mutations: (inout Value) throws -> Void) rethrows -> Protected<Value, TransformedRights> {
+
+        try unsafeMutate(mutations)
+        return unsafeChangeRights(to: rights)
     }
 
     public func unsafeBypassRights() -> Value {
