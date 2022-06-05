@@ -6,7 +6,7 @@ final class ProtectedTests: XCTestCase {
         let book = createBook()
         XCTAssertEqual(book.title, "Don Quixote")
         XCTAssertEqual(book.author, "Miguel de Cervantes")
-        XCTAssertEqual(book.isbn?.first, "0")
+        XCTAssertEqual(book.isbn.first, "0")
 
         book.title = "La cueva de salamanca"
         XCTAssertEqual(book.title, "La cueva de salamanca")
@@ -38,7 +38,7 @@ struct PrePublishRights: RightsManifest {
 
     let title = Write(\.title)
     let author = Read(\.author)
-    let isbn = Read(\.isbn).protected(by: FirstCharacterOnly())
+    let isbn = Read(\.isbn) ?? ""
 }
 
 struct FirstCharacterOnly: RightsManifest {
