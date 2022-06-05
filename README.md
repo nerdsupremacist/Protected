@@ -11,13 +11,30 @@
 # Protected
 
 Access control can't always be static. 
-Sometimes the mutability and access of variables depends on Context. 
-When dealing with these scenarios, we usually end up writing wrappers or duplicate the class for each different context.
+Sometimes the mutability, nullability and access of variables depends on context. 
+When dealing with these scenarios, we usually end up writing wrappers or duplicate the class for each different context. Well no more!
 
 Protected is a Swift Package that allows you to specify the read and write rights for any type, depending on context by using Phantom types. 
-This project is heavily inspired by [@sellmair](https://github.com/sellmair)'s [post on Phantom Read Rights](https://medium.com/@sellmair/phantom-read-rights-in-kotlin-modelling-a-pipeline-eef3523db857). 
+Here's a taste of the syntax (we will explain everything in time):
 
-For those curious Protected relies on phantom types and dynamic member look up to provide an easy API for specifying read and write rights for any type in Swift.
+```swift
+struct MyRights: RightsManifest {
+    typealias ProtectedType = Book
+    
+    let title = Write(\.title)
+    let author = Read(\.author)
+}
+
+let book = Protected(Book(), by: PrePublishRights())
+book.title // works
+book.title = "Don Quixote" // works
+book.author // works
+book.author = "" // will not compile
+book.isbn // will not compile
+```
+
+This project is heavily inspired by [@sellmair](https://github.com/sellmair)'s [post on Phantom Read Rights](https://medium.com/@sellmair/phantom-read-rights-in-kotlin-modelling-a-pipeline-eef3523db857).
+For those curious Protected relies on phantom types and [dynamic member look up](https://github.com/apple/swift-evolution/blob/main/proposals/0252-keypath-dynamic-member-lookup.md) to provide an easy API for specifying read and write rights for any type in Swift.
 
 ## Installation
 ### Swift Package Manager
@@ -39,7 +56,7 @@ let package = Package(
 So let's imagine that you run a Book publishing company. Your codebase works with information about books at different stages of publishing. 
 Most of the code revolves entirely around the following class:
 
-```class
+```swift
 public class Book {
     public var title: String?
     public var author: String?
@@ -142,7 +159,7 @@ All `Protected` values are designed to be changed. If you use the same object at
 That's why `Protected` comes with a couple of functions prefixed by `unsafeX` to signal that you really should know what it is that you're doing with the object here.
 
 For example let's imagine that you're writing a piece of code that will create an ISBN for a book and move it to the post publishing stage. So you can imagine that your rights look as follows:
-```
+```swift
 struct PrePublishRights: RightsManifest {
     typealias ProtectedType = Book
 
@@ -191,7 +208,7 @@ struct AuthorBasicRights: RightsManifest {
 
 You can also include a `.map` after any `Read` to manipulate the value:
 
-```
+```swift
 struct AuthorBasicRights: RightsManifest {
     typealias ProtectedType = Author
     
