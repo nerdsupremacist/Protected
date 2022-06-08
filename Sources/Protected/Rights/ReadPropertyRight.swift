@@ -59,6 +59,44 @@ extension ReadPropertyRight {
 }
 
 extension ReadPropertyRight {
+    public subscript<T : RightsManifest>(dynamicMember keyPath: KeyPath<Rights<T.ProtectedType>, T>) -> ReadPropertyRight<ProtectedType, T.Resolved> where Value == T.ProtectedType {
+        return protected(by: Rights.shared[keyPath: keyPath])
+    }
+
+    public subscript<T : RightsManifest>(dynamicMember keyPath: KeyPath<Rights<T.ProtectedType>, T>) -> BuiltReadPropertyRight<ProtectedType, T.Resolved?> where Value == T.ProtectedType? {
+        return BuiltReadPropertyRight(right: protected(by: Rights.shared[keyPath: keyPath]))
+    }
+
+    public subscript<T : RightsManifest>(dynamicMember keyPath: KeyPath<Rights<T.ProtectedType>, T>) -> BuiltReadPropertyRight<ProtectedType, [T.Resolved]> where Value == [T.ProtectedType] {
+        return BuiltReadPropertyRight(right: protected(by: Rights.shared[keyPath: keyPath]))
+    }
+
+    public subscript<T : RightsManifest>(dynamicMember keyPath: KeyPath<Rights<T.ProtectedType>, T>) -> BuiltReadPropertyRight<ProtectedType, [T.Resolved]?> where Value == [T.ProtectedType]? {
+        return BuiltReadPropertyRight(right: protected(by: Rights.shared[keyPath: keyPath]))
+    }
+
+    public subscript<T : RightsManifest>(dynamicMember keyPath: KeyPath<Rights<T.ProtectedType>, T>) -> BuiltReadPropertyRight<ProtectedType, [T.Resolved?]> where Value == [T.ProtectedType?] {
+        return BuiltReadPropertyRight(right: protected(by: Rights.shared[keyPath: keyPath]))
+    }
+
+    public subscript<T : RightsManifest>(dynamicMember keyPath: KeyPath<Rights<T.ProtectedType>, T>) -> BuiltReadPropertyRight<ProtectedType, [T.Resolved?]?> where Value == [T.ProtectedType?]? {
+        return BuiltReadPropertyRight(right: protected(by: Rights.shared[keyPath: keyPath]))
+    }
+}
+
+public struct BuiltReadPropertyRight<ProtectedType, Value> {
+    private let right: ReadPropertyRight<ProtectedType, Value>
+
+    fileprivate init(right: ReadPropertyRight<ProtectedType, Value>) {
+        self.right = right
+    }
+
+    public func callAsFunction() -> ReadPropertyRight<ProtectedType, Value> {
+        return right
+    }
+}
+
+extension ReadPropertyRight {
 
     public func map<T>(_ transform: @escaping (Value) -> T) -> ReadPropertyRight<ProtectedType, T> {
         return .init(strategy: strategy.map(transform))

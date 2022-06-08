@@ -48,6 +48,10 @@ public final class Protected<Value, Rights : RightsManifest> where Rights.Protec
     public func unsafeBypassRights() -> Value {
         return value
     }
+
+    public func unsafeChange() -> ProtectedBuilder<Value> {
+        return ProtectedBuilder(self)
+    }
 }
 
 extension Protected where Rights == Omniscient<Value> {

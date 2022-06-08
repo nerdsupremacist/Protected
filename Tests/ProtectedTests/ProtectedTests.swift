@@ -3,36 +3,59 @@ import XCTest
 
 final class ProtectedTests: XCTestCase {
     func testSampleRights() throws {
-        let book = createBook()
-        XCTAssertEqual(book.title, "Don Quixote")
-        XCTAssertEqual(book.title.first, "D")
-        XCTAssertEqual(book.author, "Miguel de Cervantes")
-        XCTAssertEqual(book.isbn, "0060188707")
+        let planning = createBook()
+        XCTAssertEqual(planning.title, "Don Quixote")
+        XCTAssertEqual(planning.title?.first, "D")
+        XCTAssertEqual(planning.author?.name, "Miguel de Cervantes")
+        XCTAssertEqual(planning.isbn, "0060188707")
+        planning.author?.name = "Cervantes"
+        XCTAssertEqual(planning.author?.name, "Cervantes")
 
-        book.title = "La cueva de salamanca"
-        XCTAssertEqual(book.title, "La cueva de salamanca")
-        book.unsafeMutate { $0.isbn = nil }
-        XCTAssertEqual(book.isbn?.first, nil)
+        let prePublish = planning.unsafeChange().prePublish()
+
+        prePublish.title = "La cueva de salamanca"
+        XCTAssertEqual(prePublish.title, "La cueva de salamanca")
+        XCTAssertEqual(prePublish.author, "Cervantes")
+        prePublish.unsafeMutate { $0.isbn = nil }
+        XCTAssertEqual(prePublish.isbn?.first, nil)
     }
 }
 
-func createBook() -> Protected<Book, PrePublishRights> {
-    let book = Book()
-    book.title = "Don Quixote"
-    book.author = "Miguel de Cervantes"
-    book.isbn = "0060188707"
-    return Protected(book, by: .prePublish)
+func createBook() -> Protected<Book, PlanningRights> {
+    return protect(Book())
+        .mutate { book in
+            let author = Author()
+            author.name = "Miguel de Cervantes"
+            author.password = "password"
+            book.title = "Don Quixote"
+            book.author = author
+            book.isbn = "0060188707"
+        }
+        .planning()
+}
+
+class Author {
+    var name: String?
+    var password: String?
 }
 
 class Book {
   var title: String?
-  var author: String?
+  var author: Author?
   var isbn: String?
 }
 
-extension RightsManifest where Self == PrePublishRights {
-    static var prePublish: PrePublishRights {
+extension Rights {
+    var planning: PlanningRights {
+        return PlanningRights()
+    }
+
+    var prePublish: PrePublishRights {
         return PrePublishRights()
+    }
+
+    var basic: AuthorBasicRights {
+        return AuthorBasicRights()
     }
 }
 
@@ -40,13 +63,20 @@ struct PrePublishRights: RightsManifest {
     typealias ProtectedType = Book
 
     let title = Write(\.title!)
-    let author = Read(\.author!)
+    let author = Read(\.author!.name!)
     let isbn = Read(\.isbn)
 }
 
-struct FirstCharacterOnly: RightsManifest {
-    typealias ProtectedType = String
+struct PlanningRights: RightsManifest {
+    typealias ProtectedType = Book
 
-    let first = Read(\.first)
+    let title = Write(\.title)
+    let author = Read(\.author).basic()
+    let isbn = Read(\.isbn)
 }
 
+struct AuthorBasicRights: RightsManifest {
+    typealias ProtectedType = Author
+
+    let name = Write(\.name)
+}

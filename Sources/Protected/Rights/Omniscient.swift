@@ -19,3 +19,11 @@ extension RightsManifest {
         return Omniscient()
     }
 }
+
+extension Rights {
+
+    var omniscient: Omniscient<Value> {
+        return Omniscient()
+    }
+
+}
